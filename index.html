@@ -6,45 +6,92 @@
 <title>WeightScan AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b0b0b;--sur:#151515;--card:#1d1d1d;--bdr:#272727;--acc:#c8f135;--adim:rgba(200,241,53,.10);--agl:rgba(200,241,53,.28);--txt:#efefef;--mut:#5a5a5a;--red:#ff4455}
+:root{
+  --bg:#0b0b0b;--sur:#151515;--card:#1d1d1d;--bdr:#272727;
+  --acc:#c8f135;--adim:rgba(200,241,53,.10);--agl:rgba(200,241,53,.28);
+  --txt:#efefef;--mut:#5a5a5a;--red:#ff4455
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:60px}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:40px}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,241,53,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(200,241,53,.022) 1px,transparent 1px);background-size:38px 38px;pointer-events:none;z-index:0}
-.w{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:18px 14px}
-header{display:flex;align-items:baseline;gap:10px;margin-bottom:18px;padding-bottom:13px;border-bottom:1px solid var(--bdr)}
-header h1{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;letter-spacing:2px;color:var(--acc);line-height:1}
+.w{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:14px 14px}
+
+/* header */
+header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--bdr)}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;color:var(--acc);line-height:1}
 header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);letter-spacing:3px;text-transform:uppercase}
-.setup{background:var(--sur);border:1px solid var(--bdr);border-radius:16px;padding:15px;margin-bottom:11px}
-.setup .lbl{margin-bottom:8px}
+
+/* API key */
+.setup{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;padding:13px;margin-bottom:11px}
+.lbl{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
 .key-row{display:flex;gap:8px}
 .ki{flex:1;background:var(--card);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'DM Mono',monospace;font-size:.75rem;padding:9px 10px;outline:none;min-width:0}
 .ki:focus{border-color:var(--acc)}
 .ki::placeholder{color:var(--mut)}
-.ksave{background:var(--card);border:1px solid var(--acc);border-radius:8px;color:var(--acc);font-family:'DM Mono',monospace;font-size:.7rem;padding:9px 12px;cursor:pointer;white-space:nowrap}
+.ksave{background:var(--card);border:1px solid var(--acc);border-radius:8px;color:var(--acc);font-family:'DM Mono',monospace;font-size:.68rem;padding:9px 13px;cursor:pointer}
 .ksave:active{background:var(--adim)}
-.kinfo{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);margin-top:7px;line-height:1.6}
+.kinfo{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--mut);margin-top:6px;line-height:1.6}
 .kinfo a{color:var(--acc);text-decoration:none}
-.cam-box{background:var(--sur);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;margin-bottom:11px}
-.cam-view{position:relative;width:100%;aspect-ratio:1;background:#000;overflow:hidden}
+
+/* camera */
+.cam-wrap{position:relative;margin-bottom:11px}
+.cam-view{position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:16px;overflow:hidden;border:1px solid var(--bdr)}
 #video{width:100%;height:100%;object-fit:cover;display:block}
 #canvas{display:none}
-.ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mut);background:#000}
+
+/* placeholder */
+.ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mut);background:#000;border-radius:16px}
 .ph svg{opacity:.2}
-.ph p{font-size:.8rem;text-align:center;padding:0 20px}
-.ai-ov{position:absolute;inset:0;background:rgba(0,0,0,.78);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.ph p{font-size:.8rem}
+
+/* corner frame overlay */
+.frame-ov{position:absolute;inset:0;pointer-events:none;display:none}
+.frame-ov.show{display:block}
+.corner{position:absolute;width:28px;height:28px;border-color:var(--acc);border-style:solid;opacity:.8}
+.corner.tl{top:14px;left:14px;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+.corner.tr{top:14px;right:14px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+.corner.bl{bottom:14px;left:14px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+.corner.br{bottom:14px;right:14px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+
+/* AI processing overlay */
+.ai-ov{position:absolute;inset:0;background:rgba(0,0,0,.82);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;border-radius:16px}
 .ai-ov.show{display:flex}
-.spinner{width:38px;height:38px;border:3px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
+.spinner{width:42px;height:42px;border:3px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ai-msg{font-family:'DM Mono',monospace;font-size:.74rem;color:var(--acc);text-align:center;padding:0 24px}
-.fl{position:absolute;inset:0;background:var(--acc);opacity:0;pointer-events:none}
-.fl.go{animation:fsh .35s ease-out forwards}
-@keyframes fsh{0%{opacity:.5}100%{opacity:0}}
-.cam-btns{display:flex;gap:10px;padding:11px}
-.btn{flex:1;padding:13px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;transition:opacity .15s}
+.ai-msg{font-family:'DM Mono',monospace;font-size:.76rem;color:var(--acc);text-align:center;line-height:1.5}
+
+/* result flash on camera */
+.result-flash{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:16px;background:rgba(11,11,11,.88)}
+.result-flash.show{display:flex;animation:rfade 2s forwards}
+@keyframes rfade{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
+.rf-weight{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--acc);line-height:1}
+.rf-label{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--mut);letter-spacing:3px}
+
+/* flash */
+.fl{position:absolute;inset:0;background:var(--acc);opacity:0;pointer-events:none;border-radius:16px}
+.fl.go{animation:fsh .3s ease-out forwards}
+@keyframes fsh{0%{opacity:.6}100%{opacity:0}}
+
+/* BIG capture button */
+.capture-btn{
+  width:100%;padding:22px;border-radius:14px;border:none;
+  background:var(--acc);color:#0b0b0b;
+  font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;
+  cursor:pointer;transition:transform .1s,opacity .1s;
+  margin-bottom:11px;display:none
+}
+.capture-btn:active{transform:scale(.97);opacity:.85}
+.capture-btn:disabled{opacity:.3;pointer-events:none}
+
+/* start/stop row */
+.cam-btns{display:flex;gap:9px;margin-bottom:11px}
+.btn{flex:1;padding:12px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:500;transition:opacity .15s}
 .btn:active{opacity:.7}
 .btn:disabled{opacity:.3;pointer-events:none}
 .bp{background:var(--acc);color:#0b0b0b}
 .bs{background:var(--card);color:var(--txt);border:1px solid var(--bdr)}
+
+/* status */
 .stat{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;margin-bottom:11px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--mut);flex-shrink:0;transition:background .3s}
 .dot.on{background:var(--acc);box-shadow:0 0 5px var(--agl);animation:bl 1.5s infinite}
@@ -52,31 +99,38 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 .dot.er{background:var(--red)}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.25}}
 #stTxt{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--mut);flex:1;line-height:1.4}
-.last{background:var(--sur);border:1px solid var(--bdr);border-radius:16px;padding:15px;margin-bottom:11px;display:none}
-.last.show{display:block}
-.lbl{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--mut);margin-bottom:5px}
-.big{font-family:'Bebas Neue',sans-serif;font-size:2.7rem;color:var(--acc);line-height:1}
-.raw{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);margin-top:5px;line-height:1.55}
-.tot{background:var(--adim);border:1px solid var(--acc);border-radius:16px;padding:19px;margin-bottom:11px;position:relative;overflow:hidden}
-.tot::after{content:'KG';position:absolute;right:13px;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',sans-serif;font-size:5rem;color:var(--acc);opacity:.055;pointer-events:none}
-.tot .lbl{color:var(--acc);opacity:.65}
-.totv{font-family:'Bebas Neue',sans-serif;font-size:3.6rem;color:var(--acc);line-height:1;letter-spacing:1px}
-.totc{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--acc);opacity:.5;margin-top:3px}
-.log-box{background:var(--sur);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;margin-bottom:11px}
+
+/* totals — 2 big cards */
+.totals{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.tot-card{border-radius:14px;padding:16px;position:relative;overflow:hidden}
+.tot-card.kg{background:var(--adim);border:1px solid var(--acc)}
+.tot-card.boxes{background:var(--card);border:1px solid var(--bdr)}
+.tot-card .lbl{margin-bottom:4px}
+.tot-card.kg .lbl{color:var(--acc);opacity:.7}
+.tot-val{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;line-height:1}
+.tot-card.kg .tot-val{color:var(--acc)}
+.tot-card.boxes .tot-val{color:var(--txt)}
+.tot-unit{font-family:'DM Mono',monospace;font-size:.62rem;opacity:.45;margin-top:2px}
+.tot-card.kg .tot-unit{color:var(--acc)}
+
+/* log */
+.log-box{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;margin-bottom:11px}
 .log-hd{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bdr)}
 .log-hd .lbl{margin:0}
 .bclr{background:none;border:1px solid var(--bdr);border-radius:6px;color:var(--red);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:1px;padding:4px 9px;cursor:pointer}
-.log-body{max-height:190px;overflow-y:auto}
+.log-body{max-height:220px;overflow-y:auto}
 .empty{padding:20px;text-align:center;color:var(--mut);font-family:'DM Mono',monospace;font-size:.7rem}
 .lrow{display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--bdr);animation:si .2s ease-out}
-@keyframes si{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:none}}
+@keyframes si{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
 .lrow:last-child{border-bottom:none}
-.ln{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);width:17px;text-align:right;flex-shrink:0}
-.lw{font-family:'DM Mono',monospace;font-size:.86rem;color:var(--acc);flex:1}
+.ln{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);width:22px;text-align:right;flex-shrink:0}
+.lw{font-family:'DM Mono',monospace;font-size:.88rem;color:var(--acc);flex:1}
 .lt{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut)}
-.lx{background:none;border:none;color:var(--mut);cursor:pointer;font-size:.82rem;padding:2px 5px}
+.lx{background:none;border:none;color:var(--mut);cursor:pointer;font-size:.82rem;padding:2px 6px}
 .lx:active{color:var(--red)}
-.man{background:var(--sur);border:1px solid var(--bdr);border-radius:16px;padding:12px;display:flex;gap:9px;align-items:center}
+
+/* manual */
+.man{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;padding:12px;display:flex;gap:9px;align-items:center}
 .man .lbl{margin:0;white-space:nowrap;flex-shrink:0}
 .mi{flex:1;background:var(--card);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'DM Mono',monospace;font-size:.84rem;padding:9px 10px;outline:none;min-width:0}
 .mi:focus{border-color:var(--acc)}
@@ -89,65 +143,84 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 <div class="w">
   <header><h1>WeightScan</h1><small>AI · Vision</small></header>
 
-  <div class="setup">
+  <!-- API Key -->
+  <div class="setup" id="setupBox">
     <div class="lbl">Anthropic API Key</div>
     <div class="key-row">
       <input class="ki" id="apiKey" type="password" placeholder="sk-ant-api03-...">
       <button class="ksave" onclick="saveKey()">SAVE</button>
     </div>
-    <div class="kinfo">
-      Get a free key → <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
-      Stored locally on your device only. Never sent anywhere except Anthropic.
-    </div>
+    <div class="kinfo">Get free key → <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · Stored on device only.</div>
   </div>
 
-  <div class="cam-box">
+  <!-- Camera -->
+  <div class="cam-wrap">
     <div class="cam-view">
       <video id="video" playsinline autoplay muted></video>
       <canvas id="canvas"></canvas>
       <div class="ph" id="ph">
-        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
           <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
           <circle cx="12" cy="13" r="4"/>
         </svg>
         <p>Tap Start Camera</p>
       </div>
+      <div class="frame-ov" id="frameOv">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+      </div>
       <div class="ai-ov" id="aiOv">
         <div class="spinner"></div>
-        <div class="ai-msg" id="aiMsg">AI reading label…</div>
+        <div class="ai-msg" id="aiMsg">Reading label…</div>
+      </div>
+      <div class="result-flash" id="resFlash">
+        <div class="rf-label">DETECTED</div>
+        <div class="rf-weight" id="resW">—</div>
+        <div class="rf-label">KG</div>
       </div>
       <div class="fl" id="fl"></div>
     </div>
-    <div class="cam-btns">
-      <button class="btn bp" id="startBtn" onclick="startCam()">▶ Start Camera</button>
-      <button class="btn bp" id="snapBtn" onclick="snap()" disabled style="display:none">📷 Capture</button>
-      <button class="btn bs" id="stopBtn" onclick="stopCam()" disabled>■ Stop</button>
+  </div>
+
+  <!-- BIG capture button -->
+  <button class="capture-btn" id="capBtn" onclick="snap()">📷 SCAN BOX</button>
+
+  <!-- Start / Stop -->
+  <div class="cam-btns">
+    <button class="btn bp" id="startBtn" onclick="startCam()">▶ Start Camera</button>
+    <button class="btn bs" id="stopBtn" onclick="stopCam()" disabled>■ Stop</button>
+  </div>
+
+  <!-- Status -->
+  <div class="stat"><div class="dot" id="dot"></div><span id="stTxt">Enter API key then start camera</span></div>
+
+  <!-- Totals -->
+  <div class="totals">
+    <div class="tot-card kg">
+      <div class="lbl">Total Weight</div>
+      <div class="tot-val" id="totKg">0.00</div>
+      <div class="tot-unit">KILOGRAMS</div>
+    </div>
+    <div class="tot-card boxes">
+      <div class="lbl">Total Boxes</div>
+      <div class="tot-val" id="totBoxes">0</div>
+      <div class="tot-unit">SCANNED</div>
     </div>
   </div>
 
-  <div class="stat"><div class="dot" id="dot"></div><span id="stTxt">Enter API key then start camera</span></div>
-
-  <div class="last" id="lastBox">
-    <div class="lbl">Last Detected</div>
-    <div class="big" id="lastW">—</div>
-    <div class="raw" id="lastR"></div>
-  </div>
-
-  <div class="tot">
-    <div class="lbl">Running Total</div>
-    <div class="totv" id="totV">0.00 kg</div>
-    <div class="totc" id="totC">0 scans</div>
-  </div>
-
+  <!-- History log -->
   <div class="log-box">
-    <div class="log-hd"><span class="lbl">History</span><button class="bclr" onclick="clearAll()">CLEAR</button></div>
+    <div class="log-hd"><span class="lbl">History</span><button class="bclr" onclick="clearAll()">CLEAR ALL</button></div>
     <div class="log-body" id="logBody"><div class="empty" id="emptyMsg">No scans yet</div></div>
   </div>
 
+  <!-- Manual entry -->
   <div class="man">
     <span class="lbl">Manual</span>
     <input class="mi" id="manIn" type="number" step="0.01" min="0" placeholder="e.g. 24.20">
-    <button class="badd" onclick="addManual()">+ kg</button>
+    <button class="badd" onclick="addManual()">+ ADD</button>
   </div>
 </div>
 
@@ -175,6 +248,7 @@ function setSt(cls,msg){
   document.getElementById('stTxt').textContent=msg;
 }
 
+/* ── CAMERA ── */
 async function startCam(){
   if(!API_KEY){setSt('er','Enter and save your API key first');return;}
   document.getElementById('startBtn').disabled=true;
@@ -194,19 +268,18 @@ async function startCam(){
       setTimeout(function(){rej(new Error('timeout'));},8000);
     });
     document.getElementById('ph').style.display='none';
+    document.getElementById('frameOv').classList.add('show');
     document.getElementById('startBtn').style.display='none';
-    document.getElementById('snapBtn').style.display='flex';
-    document.getElementById('snapBtn').disabled=false;
+    document.getElementById('capBtn').style.display='block';
     document.getElementById('stopBtn').disabled=false;
-    setSt('on','Point at label → tap Capture');
+    setSt('on','Point at label → tap SCAN BOX');
   }catch(e){
     var msg='Camera error';
-    if(e.name==='NotAllowedError')msg='Permission denied — allow camera in iPhone Settings → Safari';
+    if(e.name==='NotAllowedError')msg='Permission denied — allow camera in iPhone Settings';
     else if(e.name==='NotFoundError')msg='No camera found';
     else msg=e.message;
     setSt('er',msg);
     document.getElementById('startBtn').disabled=false;
-    document.getElementById('startBtn').style.display='flex';
   }
 }
 
@@ -214,18 +287,19 @@ function stopCam(){
   if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}
   document.getElementById('video').srcObject=null;
   document.getElementById('ph').style.display='flex';
+  document.getElementById('frameOv').classList.remove('show');
   document.getElementById('startBtn').style.display='flex';
   document.getElementById('startBtn').disabled=false;
-  document.getElementById('snapBtn').style.display='none';
-  document.getElementById('snapBtn').disabled=true;
+  document.getElementById('capBtn').style.display='none';
   document.getElementById('stopBtn').disabled=true;
-  setSt('','Stopped');
+  setSt('','Camera stopped');
 }
 
+/* ── SNAP & AI ── */
 async function snap(){
   if(processing)return;
   processing=true;
-  document.getElementById('snapBtn').disabled=true;
+  document.getElementById('capBtn').disabled=true;
 
   /* capture frame */
   var video=document.getElementById('video');
@@ -234,28 +308,25 @@ async function snap(){
   canvas.height=video.videoHeight;
   canvas.getContext('2d').drawImage(video,0,0);
 
-  /* flash effect */
+  /* flash */
   var fl=document.getElementById('fl');
   fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go');
 
-  /* show AI overlay */
+  /* show spinner */
   var aiOv=document.getElementById('aiOv');
   aiOv.classList.add('show');
-  document.getElementById('aiMsg').textContent='Capturing image…';
-  setSt('on','Sending to Claude AI…');
+  document.getElementById('aiMsg').textContent='Claude reading label…';
+  setSt('on','Reading label…');
 
-  /* resize image to max 1200px for speed & cost */
+  /* resize to 1200px max for speed */
   var out=document.createElement('canvas');
-  var maxW=1200;
-  var scale=Math.min(1,maxW/canvas.width);
+  var scale=Math.min(1,1200/canvas.width);
   out.width=Math.round(canvas.width*scale);
   out.height=Math.round(canvas.height*scale);
   out.getContext('2d').drawImage(canvas,0,0,out.width,out.height);
   var b64=out.toDataURL('image/jpeg',0.88).split(',')[1];
 
   try{
-    document.getElementById('aiMsg').textContent='Claude is reading the label…';
-
     var resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{
@@ -271,7 +342,7 @@ async function snap(){
           role:'user',
           content:[
             {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
-            {type:'text',text:'Look at this product weight label. Find the NET WEIGHT value in kilograms (look for: NET WEIGHT, MASA NETTO, POIDS NET, or similar). Reply with ONLY the number, example: 18.80 — no kg, no text, just the decimal number. If no weight found reply: NONE'}
+            {type:'text',text:'This is a product weight label (meat/food box). Find the NET WEIGHT in kg (look for: NET WEIGHT, MASA NETTO, POIDS NET, NETTO GEWICHT). Reply with ONLY the decimal number, example: 18.80 — no units, no words. If not found reply: NONE'}
           ]
         }]
       })
@@ -279,8 +350,7 @@ async function snap(){
 
     if(!resp.ok){
       var errData=await resp.json().catch(function(){return {};});
-      var errMsg=(errData.error&&errData.error.message)||('HTTP '+resp.status);
-      throw new Error(errMsg);
+      throw new Error((errData.error&&errData.error.message)||'HTTP '+resp.status);
     }
 
     var data=await resp.json();
@@ -291,60 +361,72 @@ async function snap(){
     }else{
       var w=parseFloat(reply.replace(',','.'));
       if(isNaN(w)||w<=0||w>99999){
-        setSt('er','Unexpected response: '+reply);
+        setSt('er','Could not read: '+reply+' — try again');
       }else{
-        addScan(w,'AI vision → '+w.toFixed(2)+' kg');
+        /* show result on camera */
+        var resFlash=document.getElementById('resFlash');
+        document.getElementById('resW').textContent=w.toFixed(2);
+        resFlash.classList.remove('show');
+        void resFlash.offsetWidth;
+        resFlash.classList.add('show');
+        setTimeout(function(){resFlash.classList.remove('show');},2000);
+        addScan(w);
       }
     }
 
   }catch(e){
     var m=e.message||'Unknown error';
-    if(m.indexOf('401')>=0||m.indexOf('invalid x-api-key')>=0){
-      setSt('er','Invalid API key — check and re-save');
+    if(m.indexOf('401')>=0||m.indexOf('x-api-key')>=0){
+      setSt('er','Invalid API key — re-enter and save');
     }else if(m.indexOf('403')>=0){
-      setSt('er','API key has no access — check your Anthropic plan');
+      setSt('er','API key access denied — check Anthropic account');
     }else{
       setSt('er','Error: '+m);
     }
   }
 
   aiOv.classList.remove('show');
-  document.getElementById('snapBtn').disabled=false;
+  document.getElementById('capBtn').disabled=false;
   processing=false;
 }
 
-function addScan(weight,raw){
+/* ── DATA ── */
+function addScan(weight){
   var t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  scans.push({id:idC++,weight:weight,time:t,raw:raw||''});
-  renderLog();updateTotal();
-  document.getElementById('lastBox').classList.add('show');
-  document.getElementById('lastW').textContent=weight.toFixed(2)+' kg';
-  document.getElementById('lastR').textContent=raw?'↳ '+raw:'';
-  setSt('ok','Added: '+weight.toFixed(2)+' kg ✓');
-  setTimeout(function(){if(stream)setSt('on','Point at label → tap Capture');},2500);
+  scans.push({id:idC++,weight:weight,time:t});
+  renderLog();
+  updateTotals();
+  setSt('ok','Box '+(scans.length)+': '+weight.toFixed(2)+' kg added ✓');
+  setTimeout(function(){if(stream)setSt('on','Point at label → tap SCAN BOX');},2000);
 }
 
-function deleteScan(id){scans=scans.filter(function(s){return s.id!==id;});renderLog();updateTotal();}
+function deleteScan(id){
+  scans=scans.filter(function(s){return s.id!==id;});
+  renderLog();updateTotals();
+}
 
 function clearAll(){
   if(!scans.length||!confirm('Clear all '+scans.length+' scan(s)?'))return;
-  scans=[];
-  document.getElementById('lastBox').classList.remove('show');
-  renderLog();updateTotal();
+  scans=[];renderLog();updateTotals();
+  setSt('','Cleared');
 }
 
 function addManual(){
   var inp=document.getElementById('manIn');
   var v=parseFloat(inp.value);
-  if(isNaN(v)||v<=0){inp.style.borderColor='var(--red)';setTimeout(function(){inp.style.borderColor='';},1000);return;}
-  addScan(v,'Manual entry');inp.value='';
+  if(isNaN(v)||v<=0){
+    inp.style.borderColor='var(--red)';
+    setTimeout(function(){inp.style.borderColor='';},1000);
+    return;
+  }
+  addScan(v);inp.value='';
 }
 document.getElementById('manIn').addEventListener('keydown',function(e){if(e.key==='Enter')addManual();});
 
-function updateTotal(){
-  var t=scans.reduce(function(s,e){return s+e.weight;},0);
-  document.getElementById('totV').textContent=t.toFixed(2)+' kg';
-  document.getElementById('totC').textContent=scans.length+' scan'+(scans.length!==1?'s':'');
+function updateTotals(){
+  var total=scans.reduce(function(s,e){return s+e.weight;},0);
+  document.getElementById('totKg').textContent=total.toFixed(2);
+  document.getElementById('totBoxes').textContent=scans.length;
 }
 
 function renderLog(){
@@ -356,7 +438,11 @@ function renderLog(){
     var n=scans.length-ri;
     var row=document.createElement('div');
     row.className='lrow';
-    row.innerHTML='<span class="ln">'+n+'</span><span class="lw">'+s.weight.toFixed(2)+' kg</span><span class="lt">'+s.time+'</span><button class="lx" onclick="deleteScan('+s.id+')">✕</button>';
+    row.innerHTML=
+      '<span class="ln">#'+n+'</span>'+
+      '<span class="lw">'+s.weight.toFixed(2)+' kg</span>'+
+      '<span class="lt">'+s.time+'</span>'+
+      '<button class="lx" onclick="deleteScan('+s.id+')">✕</button>';
     body.appendChild(row);
   });
 }
