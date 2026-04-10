@@ -16,12 +16,10 @@ body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,241,53,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(200,241,53,.022) 1px,transparent 1px);background-size:38px 38px;pointer-events:none;z-index:0}
 .w{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:14px 14px}
 
-/* header */
 header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--bdr)}
 header h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;color:var(--acc);line-height:1}
 header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);letter-spacing:3px;text-transform:uppercase}
 
-/* API key */
 .setup{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;padding:13px;margin-bottom:11px}
 .lbl{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
 .key-row{display:flex;gap:8px}
@@ -30,21 +28,17 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 .ki::placeholder{color:var(--mut)}
 .ksave{background:var(--card);border:1px solid var(--acc);border-radius:8px;color:var(--acc);font-family:'DM Mono',monospace;font-size:.68rem;padding:9px 13px;cursor:pointer}
 .ksave:active{background:var(--adim)}
-.kinfo{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--mut);margin-top:6px;line-height:1.6}
+.kinfo{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--mut);margin-top:6px;line-height:1.7}
 .kinfo a{color:var(--acc);text-decoration:none}
+.ksteps{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--mut);margin-top:8px;line-height:1.9;background:var(--card);border-radius:8px;padding:8px 10px}
 
-/* camera */
 .cam-wrap{position:relative;margin-bottom:11px}
 .cam-view{position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:16px;overflow:hidden;border:1px solid var(--bdr)}
 #video{width:100%;height:100%;object-fit:cover;display:block}
 #canvas{display:none}
-
-/* placeholder */
 .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mut);background:#000;border-radius:16px}
 .ph svg{opacity:.2}
 .ph p{font-size:.8rem}
-
-/* corner frame overlay */
 .frame-ov{position:absolute;inset:0;pointer-events:none;display:none}
 .frame-ov.show{display:block}
 .corner{position:absolute;width:28px;height:28px;border-color:var(--acc);border-style:solid;opacity:.8}
@@ -52,38 +46,24 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 .corner.tr{top:14px;right:14px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
 .corner.bl{bottom:14px;left:14px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
 .corner.br{bottom:14px;right:14px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
-
-/* AI processing overlay */
 .ai-ov{position:absolute;inset:0;background:rgba(0,0,0,.82);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;border-radius:16px}
 .ai-ov.show{display:flex}
 .spinner{width:42px;height:42px;border:3px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .ai-msg{font-family:'DM Mono',monospace;font-size:.76rem;color:var(--acc);text-align:center;line-height:1.5}
-
-/* result flash on camera */
 .result-flash{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:16px;background:rgba(11,11,11,.88)}
 .result-flash.show{display:flex;animation:rfade 2s forwards}
 @keyframes rfade{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
-.rf-weight{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--acc);line-height:1}
+.rf-weight{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;color:var(--acc);line-height:1}
 .rf-label{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--mut);letter-spacing:3px}
-
-/* flash */
 .fl{position:absolute;inset:0;background:var(--acc);opacity:0;pointer-events:none;border-radius:16px}
 .fl.go{animation:fsh .3s ease-out forwards}
 @keyframes fsh{0%{opacity:.6}100%{opacity:0}}
 
-/* BIG capture button */
-.capture-btn{
-  width:100%;padding:22px;border-radius:14px;border:none;
-  background:var(--acc);color:#0b0b0b;
-  font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;
-  cursor:pointer;transition:transform .1s,opacity .1s;
-  margin-bottom:11px;display:none
-}
+.capture-btn{width:100%;padding:22px;border-radius:14px;border:none;background:var(--acc);color:#0b0b0b;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;cursor:pointer;transition:transform .1s,opacity .1s;margin-bottom:11px;display:none}
 .capture-btn:active{transform:scale(.97);opacity:.85}
 .capture-btn:disabled{opacity:.3;pointer-events:none}
 
-/* start/stop row */
 .cam-btns{display:flex;gap:9px;margin-bottom:11px}
 .btn{flex:1;padding:12px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:500;transition:opacity .15s}
 .btn:active{opacity:.7}
@@ -91,7 +71,6 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 .bp{background:var(--acc);color:#0b0b0b}
 .bs{background:var(--card);color:var(--txt);border:1px solid var(--bdr)}
 
-/* status */
 .stat{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;margin-bottom:11px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--mut);flex-shrink:0;transition:background .3s}
 .dot.on{background:var(--acc);box-shadow:0 0 5px var(--agl);animation:bl 1.5s infinite}
@@ -100,7 +79,6 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.25}}
 #stTxt{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--mut);flex:1;line-height:1.4}
 
-/* totals — 2 big cards */
 .totals{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
 .tot-card{border-radius:14px;padding:16px;position:relative;overflow:hidden}
 .tot-card.kg{background:var(--adim);border:1px solid var(--acc)}
@@ -113,7 +91,6 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 .tot-unit{font-family:'DM Mono',monospace;font-size:.62rem;opacity:.45;margin-top:2px}
 .tot-card.kg .tot-unit{color:var(--acc)}
 
-/* log */
 .log-box{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;margin-bottom:11px}
 .log-hd{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bdr)}
 .log-hd .lbl{margin:0}
@@ -129,7 +106,6 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 .lx{background:none;border:none;color:var(--mut);cursor:pointer;font-size:.82rem;padding:2px 6px}
 .lx:active{color:var(--red)}
 
-/* manual */
 .man{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;padding:12px;display:flex;gap:9px;align-items:center}
 .man .lbl{margin:0;white-space:nowrap;flex-shrink:0}
 .mi{flex:1;background:var(--card);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'DM Mono',monospace;font-size:.84rem;padding:9px 10px;outline:none;min-width:0}
@@ -144,13 +120,18 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
   <header><h1>WeightScan</h1><small>AI · Vision</small></header>
 
   <!-- API Key -->
-  <div class="setup" id="setupBox">
-    <div class="lbl">Anthropic API Key</div>
+  <div class="setup">
+    <div class="lbl">Google Gemini API Key (FREE)</div>
     <div class="key-row">
-      <input class="ki" id="apiKey" type="password" placeholder="sk-ant-api03-...">
+      <input class="ki" id="apiKey" type="password" placeholder="AIza...">
       <button class="ksave" onclick="saveKey()">SAVE</button>
     </div>
-    <div class="kinfo">Get free key → <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · Stored on device only.</div>
+    <div class="ksteps">
+      1. Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--acc)">aistudio.google.com/app/apikey</a><br>
+      2. Click "Create API Key"<br>
+      3. Copy it and paste above → SAVE<br>
+      ✓ 100% free · no credit card needed
+    </div>
   </div>
 
   <!-- Camera -->
@@ -166,10 +147,8 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
         <p>Tap Start Camera</p>
       </div>
       <div class="frame-ov" id="frameOv">
-        <div class="corner tl"></div>
-        <div class="corner tr"></div>
-        <div class="corner bl"></div>
-        <div class="corner br"></div>
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
       </div>
       <div class="ai-ov" id="aiOv">
         <div class="spinner"></div>
@@ -184,19 +163,15 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
     </div>
   </div>
 
-  <!-- BIG capture button -->
   <button class="capture-btn" id="capBtn" onclick="snap()">📷 SCAN BOX</button>
 
-  <!-- Start / Stop -->
   <div class="cam-btns">
     <button class="btn bp" id="startBtn" onclick="startCam()">▶ Start Camera</button>
     <button class="btn bs" id="stopBtn" onclick="stopCam()" disabled>■ Stop</button>
   </div>
 
-  <!-- Status -->
   <div class="stat"><div class="dot" id="dot"></div><span id="stTxt">Enter API key then start camera</span></div>
 
-  <!-- Totals -->
   <div class="totals">
     <div class="tot-card kg">
       <div class="lbl">Total Weight</div>
@@ -210,13 +185,11 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
     </div>
   </div>
 
-  <!-- History log -->
   <div class="log-box">
     <div class="log-hd"><span class="lbl">History</span><button class="bclr" onclick="clearAll()">CLEAR ALL</button></div>
     <div class="log-body" id="logBody"><div class="empty" id="emptyMsg">No scans yet</div></div>
   </div>
 
-  <!-- Manual entry -->
   <div class="man">
     <span class="lbl">Manual</span>
     <input class="mi" id="manIn" type="number" step="0.01" min="0" placeholder="e.g. 24.20">
@@ -227,19 +200,18 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 <script>
 var scans=[],idC=0,stream=null,processing=false,API_KEY='';
 
-/* load saved key */
 (function(){
   try{
-    var k=localStorage.getItem('ws_api_key');
+    var k=localStorage.getItem('ws_gemini_key');
     if(k){API_KEY=k;document.getElementById('apiKey').value=k;setSt('ok','API key loaded ✓');}
   }catch(e){}
 })();
 
 function saveKey(){
   var k=document.getElementById('apiKey').value.trim();
-  if(!k||!k.startsWith('sk-')){setSt('er','Invalid key — must start with sk-');return;}
+  if(!k){setSt('er','Please enter your API key');return;}
   API_KEY=k;
-  try{localStorage.setItem('ws_api_key',k);}catch(e){}
+  try{localStorage.setItem('ws_gemini_key',k);}catch(e){}
   setSt('ok','API key saved ✓');
 }
 
@@ -248,7 +220,6 @@ function setSt(cls,msg){
   document.getElementById('stTxt').textContent=msg;
 }
 
-/* ── CAMERA ── */
 async function startCam(){
   if(!API_KEY){setSt('er','Enter and save your API key first');return;}
   document.getElementById('startBtn').disabled=true;
@@ -287,7 +258,6 @@ function stopCam(){
   if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}
   document.getElementById('video').srcObject=null;
   document.getElementById('ph').style.display='flex';
-  document.getElementById('frameOv').classList.remove('show');
   document.getElementById('startBtn').style.display='flex';
   document.getElementById('startBtn').disabled=false;
   document.getElementById('capBtn').style.display='none';
@@ -295,30 +265,26 @@ function stopCam(){
   setSt('','Camera stopped');
 }
 
-/* ── SNAP & AI ── */
 async function snap(){
   if(processing)return;
   processing=true;
   document.getElementById('capBtn').disabled=true;
 
-  /* capture frame */
   var video=document.getElementById('video');
   var canvas=document.getElementById('canvas');
   canvas.width=video.videoWidth;
   canvas.height=video.videoHeight;
   canvas.getContext('2d').drawImage(video,0,0);
 
-  /* flash */
   var fl=document.getElementById('fl');
   fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go');
 
-  /* show spinner */
   var aiOv=document.getElementById('aiOv');
   aiOv.classList.add('show');
-  document.getElementById('aiMsg').textContent='Claude reading label…';
+  document.getElementById('aiMsg').textContent='Gemini reading label…';
   setSt('on','Reading label…');
 
-  /* resize to 1200px max for speed */
+  /* resize */
   var out=document.createElement('canvas');
   var scale=Math.min(1,1200/canvas.width);
   out.width=Math.round(canvas.width*scale);
@@ -327,34 +293,31 @@ async function snap(){
   var b64=out.toDataURL('image/jpeg',0.88).split(',')[1];
 
   try{
-    var resp=await fetch('https://api.anthropic.com/v1/messages',{
+    var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+API_KEY;
+
+    var resp=await fetch(url,{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':API_KEY,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-haiku-4-5-20251001',
-        max_tokens:64,
-        messages:[{
-          role:'user',
-          content:[
-            {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
-            {type:'text',text:'This is a product weight label (meat/food box). Find the NET WEIGHT in kg (look for: NET WEIGHT, MASA NETTO, POIDS NET, NETTO GEWICHT). Reply with ONLY the decimal number, example: 18.80 — no units, no words. If not found reply: NONE'}
+        contents:[{
+          parts:[
+            {inline_data:{mime_type:'image/jpeg',data:b64}},
+            {text:'This is a product weight label (meat/food box). Find the NET WEIGHT in kg (look for: NET WEIGHT, MASA NETTO, POIDS NET, NETTO). Reply with ONLY the decimal number, example: 18.80 — no units, no extra words. If not found reply: NONE'}
           ]
-        }]
+        }],
+        generationConfig:{maxOutputTokens:32,temperature:0}
       })
     });
 
     if(!resp.ok){
       var errData=await resp.json().catch(function(){return {};});
-      throw new Error((errData.error&&errData.error.message)||'HTTP '+resp.status);
+      var errMsg=(errData.error&&errData.error.message)||('HTTP '+resp.status);
+      throw new Error(errMsg);
     }
 
     var data=await resp.json();
-    var reply=((data.content&&data.content[0]&&data.content[0].text)||'').trim();
+    var reply='';
+    try{reply=data.candidates[0].content.parts[0].text.trim();}catch(e){}
 
     if(!reply||reply.toUpperCase()==='NONE'){
       setSt('er','No weight found — aim closer at the label');
@@ -363,7 +326,6 @@ async function snap(){
       if(isNaN(w)||w<=0||w>99999){
         setSt('er','Could not read: '+reply+' — try again');
       }else{
-        /* show result on camera */
         var resFlash=document.getElementById('resFlash');
         document.getElementById('resW').textContent=w.toFixed(2);
         resFlash.classList.remove('show');
@@ -376,10 +338,10 @@ async function snap(){
 
   }catch(e){
     var m=e.message||'Unknown error';
-    if(m.indexOf('401')>=0||m.indexOf('x-api-key')>=0){
-      setSt('er','Invalid API key — re-enter and save');
-    }else if(m.indexOf('403')>=0){
-      setSt('er','API key access denied — check Anthropic account');
+    if(m.indexOf('API_KEY')>=0||m.indexOf('401')>=0){
+      setSt('er','Invalid API key — check and re-save');
+    }else if(m.indexOf('quota')>=0||m.indexOf('429')>=0){
+      setSt('er','Rate limit — wait a moment and try again');
     }else{
       setSt('er','Error: '+m);
     }
@@ -390,13 +352,11 @@ async function snap(){
   processing=false;
 }
 
-/* ── DATA ── */
 function addScan(weight){
   var t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   scans.push({id:idC++,weight:weight,time:t});
-  renderLog();
-  updateTotals();
-  setSt('ok','Box '+(scans.length)+': '+weight.toFixed(2)+' kg added ✓');
+  renderLog();updateTotals();
+  setSt('ok','Box '+scans.length+': '+weight.toFixed(2)+' kg ✓');
   setTimeout(function(){if(stream)setSt('on','Point at label → tap SCAN BOX');},2000);
 }
 
@@ -407,18 +367,13 @@ function deleteScan(id){
 
 function clearAll(){
   if(!scans.length||!confirm('Clear all '+scans.length+' scan(s)?'))return;
-  scans=[];renderLog();updateTotals();
-  setSt('','Cleared');
+  scans=[];renderLog();updateTotals();setSt('','Cleared');
 }
 
 function addManual(){
   var inp=document.getElementById('manIn');
   var v=parseFloat(inp.value);
-  if(isNaN(v)||v<=0){
-    inp.style.borderColor='var(--red)';
-    setTimeout(function(){inp.style.borderColor='';},1000);
-    return;
-  }
+  if(isNaN(v)||v<=0){inp.style.borderColor='var(--red)';setTimeout(function(){inp.style.borderColor='';},1000);return;}
   addScan(v);inp.value='';
 }
 document.getElementById('manIn').addEventListener('keydown',function(e){if(e.key==='Enter')addManual();});
@@ -438,11 +393,7 @@ function renderLog(){
     var n=scans.length-ri;
     var row=document.createElement('div');
     row.className='lrow';
-    row.innerHTML=
-      '<span class="ln">#'+n+'</span>'+
-      '<span class="lw">'+s.weight.toFixed(2)+' kg</span>'+
-      '<span class="lt">'+s.time+'</span>'+
-      '<button class="lx" onclick="deleteScan('+s.id+')">✕</button>';
+    row.innerHTML='<span class="ln">#'+n+'</span><span class="lw">'+s.weight.toFixed(2)+' kg</span><span class="lt">'+s.time+'</span><button class="lx" onclick="deleteScan('+s.id+')">✕</button>';
     body.appendChild(row);
   });
 }
