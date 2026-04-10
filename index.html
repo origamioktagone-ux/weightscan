@@ -284,13 +284,13 @@ async function snap(){
   document.getElementById('aiMsg').textContent='Gemini reading label…';
   setSt('on','Reading label…');
 
-  /* resize */
+  /* resize to 800px — small enough to avoid rate limits */
   var out=document.createElement('canvas');
-  var scale=Math.min(1,1200/canvas.width);
+  var scale=Math.min(1,800/canvas.width);
   out.width=Math.round(canvas.width*scale);
   out.height=Math.round(canvas.height*scale);
   out.getContext('2d').drawImage(canvas,0,0,out.width,out.height);
-  var b64=out.toDataURL('image/jpeg',0.88).split(',')[1];
+  var b64=out.toDataURL('image/jpeg',0.72).split(',')[1];
 
   try{
     var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+API_KEY;
@@ -340,8 +340,21 @@ async function snap(){
     var m=e.message||'Unknown error';
     if(m.indexOf('API_KEY')>=0||m.indexOf('401')>=0){
       setSt('er','Invalid API key — check and re-save');
-    }else if(m.indexOf('quota')>=0||m.indexOf('429')>=0){
-      setSt('er','Rate limit — wait a moment and try again');
+    }else if(m.indexOf('quota')>=0||m.indexOf('429')>=0||m.indexOf('RESOURCE_EXHAUSTED')>=0){
+      /* auto retry after 10 seconds */
+      var secs=10;
+      var countdown=setInterval(function(){
+        setSt('er','Rate limit — retrying in '+secs+'s…');
+        secs--;
+        if(secs<0){
+          clearInterval(countdown);
+          document.getElementById('capBtn').disabled=false;
+          document.getElementById('aiOv').classList.remove('show');
+          processing=false;
+          setSt('on','Ready — tap SCAN BOX to retry');
+        }
+      },1000);
+      return;
     }else{
       setSt('er','Error: '+m);
     }
