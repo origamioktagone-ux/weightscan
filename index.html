@@ -10273,16 +10273,37 @@ function setSt(cls,msg){
 
 /* ── weight extraction ── */
 function extractW(text){
+  // GS1 Application Identifiers for weight:
+  // (3102) = net weight kg, 2 decimal places  e.g. (3102)1880 → 18.80 kg
+  // (3101) = net weight kg, 1 decimal place   e.g. (3101)188  → 18.8 kg
+  // (3100) = net weight kg, 0 decimal places  e.g. (3100)19   → 19 kg
+  // (3103) = net weight kg, 3 decimal places  e.g. (3103)18800 → 18.800 kg
+  var gs1=[
+    {pat:/\(3100\)(\d+)/,dec:0},
+    {pat:/\(3101\)(\d+)/,dec:1},
+    {pat:/\(3102\)(\d+)/,dec:2},
+    {pat:/\(3103\)(\d+)/,dec:3},
+    {pat:/\(3104\)(\d+)/,dec:4},
+    // also without parentheses in case scanner strips them
+    {pat:/310[0-4](\d+)/,dec:2}
+  ];
+  for(var i=0;i<gs1.length;i++){
+    var m=text.match(gs1[i].pat);
+    if(m){
+      var v=parseInt(m[1],10)/Math.pow(10,gs1[i].dec);
+      if(!isNaN(v)&&v>0&&v<1e6)return v;
+    }
+  }
+  // fallback: plain kg patterns
   var pats=[
     /net\s*weight[\s:\/\\]+(\d+[.,]\d+)\s*kg/i,
     /masa\s*netto[\s:\/\\]+(\d+[.,]\d+)\s*kg/i,
     /(\d+[.,]\d+)\s*kg/i,
-    /weight[\s:]+(\d+[.,]\d+)/i,
-    /(\d{2,6}[.,]\d{1,3})/
+    /weight[\s:]+(\d+[.,]\d+)/i
   ];
-  for(var i=0;i<pats.length;i++){
-    var m=text.match(pats[i]);
-    if(m){var v=parseFloat(m[1].replace(',','.'));if(!isNaN(v)&&v>0&&v<1e6)return v;}
+  for(var j=0;j<pats.length;j++){
+    var m2=text.match(pats[j]);
+    if(m2){var v2=parseFloat(m2[1].replace(',','.'));if(!isNaN(v2)&&v2>0&&v2<1e6)return v2;}
   }
   return null;
 }
@@ -10441,8 +10462,8 @@ async function startCam(){
     if('BarcodeDetector' in window){
       try{
         var fmts=await BarcodeDetector.getSupportedFormats();
-        if(fmts.indexOf('qr_code')>=0){
-          detector=new BarcodeDetector({formats:['qr_code']});
+        if(fmts.indexOf('qr_code')>=0||fmts.indexOf('aztec')>=0){
+          detector=new BarcodeDetector({formats:['qr_code','aztec','data_matrix','pdf417']});
           nativeLoop();
           engineOk=true;
           dbg('Engine: Native BarcodeDetector ✓');
