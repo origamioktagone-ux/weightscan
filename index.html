@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<script src="jsQR.js"></script>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -361,21 +362,31 @@ async function startCam(){
       }catch(e){dbg('BarcodeDetector error: '+e.message);}
     }
 
-    /* 2 — ZXing fallback */
-    if(!engineOk){
-      dbg('Falling back to ZXing…');
-      try{
-        await loadZXing();
-        var reader=new ZXingBrowser.BrowserMultiFormatReader();
-        zCtrl=await reader.decodeFromStream(stream,video,function(result,err){
-          if(result)onQR(result.getText());
-        });
-        engineOk=true;
-        dbg('Engine: ZXing ✓');
-      }catch(e){
-        dbg('ZXing error: '+e.message);
+   /* 2 — jsQR fallback */
+if(!engineOk){
+  if(typeof jsQR !== 'undefined'){
+    dbg('Engine: jsQR ✓');
+    engineOk=true;
+    var canvas2=document.getElementById('canvas');
+    var ctx2=canvas2.getContext('2d');
+    var video2=document.getElementById('video');
+    function jsqrLoop(){
+      if(!scanning)return;
+      if(video2.readyState>=2&&video2.videoWidth>0){
+        canvas2.width=video2.videoWidth;
+        canvas2.height=video2.videoHeight;
+        ctx2.drawImage(video2,0,0);
+        var img=ctx2.getImageData(0,0,canvas2.width,canvas2.height);
+        var code=jsQR(img.data,img.width,img.height);
+        if(code)onQR(code.data);
       }
+      rafId=requestAnimationFrame(jsqrLoop);
     }
+    jsqrLoop();
+  }else{
+    dbg('jsQR not loaded');
+  }
+}
 
     if(engineOk){
       setSt('on','Scanning… point at QR code');
