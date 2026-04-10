@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>WeightScan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0b0b;--sur:#151515;--card:#1d1d1d;--bdr:#272727;--acc:#c8f135;--adim:rgba(200,241,53,.10);--agl:rgba(200,241,53,.28);--txt:#efefef;--mut:#5a5a5a;--red:#ff4455}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:50px}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,241,53,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(200,241,53,.022) 1px,transparent 1px);background-size:38px 38px;pointer-events:none;z-index:0}
+.w{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:18px 14px}
+
+/* header */
+header{display:flex;align-items:baseline;gap:10px;margin-bottom:18px;padding-bottom:13px;border-bottom:1px solid var(--bdr)}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;letter-spacing:2px;color:var(--acc);line-height:1}
+header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);letter-spacing:3px;text-transform:uppercase}
+
+/* camera */
+.cam-box{background:var(--sur);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;margin-bottom:11px}
+.cam-view{position:relative;width:100%;aspect-ratio:1;background:#000;overflow:hidden}
+#video{width:100%;height:100%;object-fit:cover;display:block}
+#canvas{display:none}
+
+/* placeholder */
+.ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mut);background:#000;transition:opacity .3s}
+.ph svg{opacity:.2}
+.ph p{font-size:.8rem}
+
+/* frame overlay */
+.ov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none}
+.frame{width:56%;aspect-ratio:1;position:relative}
+.frame::before,.frame::after,.ca,.cb{content:'';position:absolute;width:22px;height:22px;border-color:var(--acc);border-style:solid}
+.frame::before{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+.frame::after{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+.ca{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+.cb{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+.sl{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--acc),transparent);box-shadow:0 0 7px var(--agl);animation:scan 2s ease-in-out infinite}
+@keyframes scan{0%{top:0%}50%{top:100%}100%{top:0%}}
+.fl{position:absolute;inset:0;background:var(--acc);opacity:0;pointer-events:none}
+.fl.go{animation:fsh .4s ease-out forwards}
+@keyframes fsh{0%{opacity:.3}100%{opacity:0}}
+
+/* buttons */
+.cam-btns{display:flex;gap:10px;padding:11px}
+.btn{flex:1;padding:11px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:500;transition:opacity .15s}
+.btn:active{opacity:.7}
+.btn:disabled{opacity:.3;pointer-events:none}
+.bp{background:var(--acc);color:#0b0b0b}
+.bs{background:var(--card);color:var(--txt);border:1px solid var(--bdr)}
+
+/* status */
+.stat{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;margin-bottom:11px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--mut);flex-shrink:0;transition:background .3s}
+.dot.on{background:var(--acc);box-shadow:0 0 5px var(--agl);animation:bl 1.5s infinite}
+.dot.ok{background:var(--acc);box-shadow:0 0 5px var(--agl)}
+.dot.er{background:var(--red)}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.25}}
+#stTxt{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--mut);flex:1;line-height:1.4}
+
+/* debug */
+#dbg{font-family:'DM Mono',monospace;font-size:.58rem;color:#484848;background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:7px 10px;margin-bottom:11px;line-height:1.8;display:none;max-height:90px;overflow-y:auto;word-break:break-all}
+#dbg.show{display:block}
+
+/* last scan */
+.last{background:var(--sur);border:1px solid var(--bdr);border-radius:16px;padding:15px;margin-bottom:11px;display:none}
+.last.show{display:block}
+.lbl{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--mut);margin-bottom:5px}
+.big{font-family:'Bebas Neue',sans-serif;font-size:2.7rem;color:var(--acc);line-height:1}
+.raw{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);margin-top:5px;word-break:break-all;line-height:1.55}
+
+/* total */
+.tot{background:var(--adim);border:1px solid var(--acc);border-radius:16px;padding:19px;margin-bottom:11px;position:relative;overflow:hidden}
+.tot::after{content:'KG';position:absolute;right:13px;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',sans-serif;font-size:5rem;color:var(--acc);opacity:.055;pointer-events:none}
+.tot .lbl{color:var(--acc);opacity:.65}
+.totv{font-family:'Bebas Neue',sans-serif;font-size:3.6rem;color:var(--acc);line-height:1;letter-spacing:1px}
+.totc{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--acc);opacity:.5;margin-top:3px}
+
+/* log */
+.log-box{background:var(--sur);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;margin-bottom:11px}
+.log-hd{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bdr)}
+.log-hd .lbl{margin:0}
+.bclr{background:none;border:1px solid var(--bdr);border-radius:6px;color:var(--red);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:1px;padding:4px 9px;cursor:pointer}
+.log-body{max-height:190px;overflow-y:auto}
+.empty{padding:20px;text-align:center;color:var(--mut);font-family:'DM Mono',monospace;font-size:.7rem}
+.lrow{display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--bdr);animation:si .2s ease-out}
+@keyframes si{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:none}}
+.lrow:last-child{border-bottom:none}
+.ln{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);width:17px;text-align:right;flex-shrink:0}
+.lw{font-family:'DM Mono',monospace;font-size:.86rem;color:var(--acc);flex:1}
+.lt{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut)}
+.lx{background:none;border:none;color:var(--mut);cursor:pointer;font-size:.82rem;padding:2px 5px}
+.lx:active{color:var(--red)}
+
+/* manual */
+.man{background:var(--sur);border:1px solid var(--bdr);border-radius:16px;padding:12px;display:flex;gap:9px;align-items:center}
+.man .lbl{margin:0;white-space:nowrap;flex-shrink:0}
+.mi{flex:1;background:var(--card);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'DM Mono',monospace;font-size:.84rem;padding:9px 10px;outline:none;min-width:0}
+.mi:focus{border-color:var(--acc)}
+.mi::placeholder{color:var(--mut)}
+.badd{background:var(--card);border:1px solid var(--bdr);border-radius:8px;color:var(--acc);font-family:'DM Mono',monospace;font-size:.7rem;padding:9px 12px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.badd:active{background:var(--adim)}
+</style>
+
+</head>
+<body>
+<div class="w">
+  <header><h1>WeightScan</h1><small>QR · Extractor</small></header>
+
+  <div class="cam-box">
+    <div class="cam-view">
+      <video id="video" playsinline autoplay muted></video>
+      <canvas id="canvas"></canvas>
+      <div class="ph" id="ph">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <p>Tap Start Camera</p>
+      </div>
+      <div class="ov" id="ov">
+        <div class="frame"><div class="ca"></div><div class="cb"></div><div class="sl"></div></div>
+      </div>
+      <div class="fl" id="fl"></div>
+    </div>
+    <div class="cam-btns">
+      <button class="btn bp" id="startBtn" onclick="startCam()">▶ Start Camera</button>
+      <button class="btn bs" id="stopBtn" onclick="stopCam()" disabled>■ Stop</button>
+    </div>
+  </div>
+
+  <div class="stat"><div class="dot" id="dot"></div><span id="stTxt">Ready — tap Start Camera</span></div>
+  <div id="dbg"></div>
+
+  <div class="last" id="lastBox">
+    <div class="lbl">Last Detected</div>
+    <div class="big" id="lastW">—</div>
+    <div class="raw" id="lastR"></div>
+  </div>
+
+  <div class="tot">
+    <div class="lbl">Running Total</div>
+    <div class="totv" id="totV">0.00 kg</div>
+    <div class="totc" id="totC">0 scans</div>
+  </div>
+
+  <div class="log-box">
+    <div class="log-hd"><span class="lbl">History</span><button class="bclr" onclick="clearAll()">CLEAR</button></div>
+    <div class="log-body" id="logBody"><div class="empty" id="emptyMsg">No scans yet</div></div>
+  </div>
+
+  <div class="man">
+    <span class="lbl">Manual</span>
+    <input class="mi" id="manIn" type="number" step="0.01" min="0" placeholder="e.g. 24.20">
+    <button class="badd" onclick="addManual()">+ kg</button>
+  </div>
+</div>
+
+<script>
+/* ── state ── */
+var scans=[],idC=0,stream=null,scanning=false;
+var cooldown=false,lastText=null,rafId=null,detector=null,zCtrl=null;
+
+/* ── debug ── */
+function dbg(m){
+  var el=document.getElementById('dbg');
+  el.classList.add('show');
+  el.innerHTML+=m+'<br>';
+  el.scrollTop=el.scrollHeight;
+}
+
+/* ── status ── */
+function setSt(cls,msg){
+  document.getElementById('dot').className='dot '+(cls||'');
+  document.getElementById('stTxt').textContent=msg;
+}
+
+/* ── weight extraction ── */
+function extractW(text){
+  var pats=[
+    /net\s*weight[\s:\/\\]+(\d+[.,]\d+)\s*kg/i,
+    /masa\s*netto[\s:\/\\]+(\d+[.,]\d+)\s*kg/i,
+    /(\d+[.,]\d+)\s*kg/i,
+    /weight[\s:]+(\d+[.,]\d+)/i,
+    /(\d{2,6}[.,]\d{1,3})/
+  ];
+  for(var i=0;i<pats.length;i++){
+    var m=text.match(pats[i]);
+    if(m){var v=parseFloat(m[1].replace(',','.'));if(!isNaN(v)&&v>0&&v<1e6)return v;}
+  }
+  return null;
+}
+
+/* ── on QR ── */
+function onQR(text){
+  if(cooldown||text===lastText)return;
+  dbg('QR: '+text.substring(0,70));
+  var w=extractW(text);
+  if(w!==null){
+    lastText=text;cooldown=true;
+    addScan(w,text);
+    setTimeout(function(){cooldown=false;lastText=null;},3500);
+  }else{
+    setSt('','QR found — no weight detected');
+    setTimeout(function(){if(scanning)setSt('on','Scanning…');},2000);
+  }
+}
+
+/* ── add scan ── */
+function addScan(weight,raw){
+  var t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  scans.push({id:idC++,weight:weight,time:t,raw:raw||''});
+  renderLog();updateTotal();
+  var fl=document.getElementById('fl');
+  fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go');
+  document.getElementById('lastBox').classList.add('show');
+  document.getElementById('lastW').textContent=weight.toFixed(2)+' kg';
+  document.getElementById('lastR').textContent=raw?'↳ '+raw.substring(0,80):'';
+  setSt('ok','Added: '+weight.toFixed(2)+' kg ✓');
+  setTimeout(function(){if(scanning)setSt('on','Scanning…');},2500);
+}
+
+function deleteScan(id){scans=scans.filter(function(s){return s.id!==id;});renderLog();updateTotal();}
+
+function clearAll(){
+  if(!scans.length||!confirm('Clear all '+scans.length+' scan(s)?'))return;
+  scans=[];lastText=null;
+  document.getElementById('lastBox').classList.remove('show');
+  renderLog();updateTotal();
+}
+
+function addManual(){
+  var inp=document.getElementById('manIn');
+  var v=parseFloat(inp.value);
+  if(isNaN(v)||v<=0){inp.style.borderColor='var(--red)';setTimeout(function(){inp.style.borderColor='';},1000);return;}
+  addScan(v,'Manual entry');inp.value='';
+}
+document.getElementById('manIn').addEventListener('keydown',function(e){if(e.key==='Enter')addManual();});
+
+function updateTotal(){
+  var t=scans.reduce(function(s,e){return s+e.weight;},0);
+  document.getElementById('totV').textContent=t.toFixed(2)+' kg';
+  document.getElementById('totC').textContent=scans.length+' scan'+(scans.length!==1?'s':'');
+}
+
+function renderLog(){
+  var body=document.getElementById('logBody');
+  body.querySelectorAll('.lrow').forEach(function(e){e.remove();});
+  document.getElementById('emptyMsg').style.display=scans.length?'none':'block';
+  var rev=[].concat(scans).reverse();
+  rev.forEach(function(s,ri){
+    var n=scans.length-ri;
+    var row=document.createElement('div');
+    row.className='lrow';
+    row.innerHTML='<span class="ln">'+n+'</span><span class="lw">'+s.weight.toFixed(2)+' kg</span><span class="lt">'+s.time+'</span><button class="lx" onclick="deleteScan('+s.id+')">✕</button>';
+    body.appendChild(row);
+  });
+}
+
+/* ── native BarcodeDetector loop ── */
+function nativeLoop(){
+  var video=document.getElementById('video');
+  var canvas=document.getElementById('canvas');
+  var ctx=canvas.getContext('2d');
+  function tick(){
+    if(!scanning)return;
+    if(video.readyState>=2&&video.videoWidth>0){
+      canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+      ctx.drawImage(video,0,0);
+      detector.detect(canvas).then(function(codes){
+        codes.forEach(function(c){onQR(c.rawValue);});
+      }).catch(function(){});
+    }
+    rafId=requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+/* ── load ZXing from CDN ── */
+function loadZXing(){
+  return new Promise(function(res,rej){
+    if(window.ZXingBrowser){res();return;}
+    var cdns=[
+      'https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.4/umd/index.min.js',
+      'https://unpkg.com/@zxing/browser@0.1.4/umd/index.min.js'
+    ];
+    var i=0;
+    function next(){
+      if(i>=cdns.length){rej(new Error('ZXing CDN unavailable'));return;}
+      var s=document.createElement('script');
+      s.src=cdns[i++];
+      s.onload=function(){dbg('ZXing loaded ✓');res();};
+      s.onerror=function(){dbg('CDN '+i+' failed, trying next…');next();};
+      document.head.appendChild(s);
+    }
+    next();
+  });
+}
+
+/* ── START ── */
+async function startCam(){
+  document.getElementById('startBtn').disabled=true;
+  setSt('on','Requesting camera…');
+  dbg('=== Start ===');
+
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    setSt('er','Camera not supported — use Chrome or Safari');
+    dbg('getUserMedia missing');
+    document.getElementById('startBtn').disabled=false;
+    return;
+  }
+
+  try{
+    /* try rear camera first */
+    try{
+      stream=await navigator.mediaDevices.getUserMedia({
+        video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}
+      });
+      dbg('Rear camera acquired');
+    }catch(e){
+      dbg('Rear cam failed ('+e.name+'), trying any…');
+      stream=await navigator.mediaDevices.getUserMedia({video:true});
+      dbg('Front/any camera acquired');
+    }
+
+    var track=stream.getVideoTracks()[0];
+    dbg('Track label: '+(track&&track.label||'unknown'));
+
+    var video=document.getElementById('video');
+    video.srcObject=stream;
+
+    await new Promise(function(res,rej){
+      video.onloadedmetadata=function(){
+        video.play().then(res).catch(rej);
+      };
+      setTimeout(function(){rej(new Error('Video play timeout'));},8000);
+    });
+
+    dbg('Video playing '+video.videoWidth+'×'+video.videoHeight);
+
+    /* show overlay */
+    document.getElementById('ph').style.display='none';
+    document.getElementById('ov').style.display='flex';
+    document.getElementById('stopBtn').disabled=false;
+    scanning=true;
+
+    var engineOk=false;
+
+    /* 1 — Native BarcodeDetector */
+    if('BarcodeDetector' in window){
+      try{
+        var fmts=await BarcodeDetector.getSupportedFormats();
+        dbg('BarcodeDetector formats: '+fmts.join(','));
+        if(fmts.indexOf('qr_code')>=0){
+          detector=new BarcodeDetector({formats:['qr_code']});
+          nativeLoop();
+          engineOk=true;
+          dbg('Engine: Native BarcodeDetector ✓');
+        }
+      }catch(e){dbg('BarcodeDetector error: '+e.message);}
+    }
+
+    /* 2 — ZXing fallback */
+    if(!engineOk){
+      dbg('Falling back to ZXing…');
+      try{
+        await loadZXing();
+        var reader=new ZXingBrowser.BrowserMultiFormatReader();
+        zCtrl=await reader.decodeFromStream(stream,video,function(result,err){
+          if(result)onQR(result.getText());
+        });
+        engineOk=true;
+        dbg('Engine: ZXing ✓');
+      }catch(e){
+        dbg('ZXing error: '+e.message);
+      }
+    }
+
+    if(engineOk){
+      setSt('on','Scanning… point at QR code');
+    }else{
+      setSt('er','No scanner engine available — use Manual below');
+    }
+
+  }catch(e){
+    dbg('ERROR: '+e.name+' – '+e.message);
+    var msg='Camera error';
+    if(e.name==='NotAllowedError')msg='Permission denied — allow camera then retry';
+    else if(e.name==='NotFoundError')msg='No camera found on device';
+    else if(e.name==='NotReadableError')msg='Camera in use by another app';
+    else msg=e.name+': '+e.message;
+    setSt('er',msg);
+    if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}
+    document.getElementById('ph').style.display='flex';
+    document.getElementById('startBtn').disabled=false;
+  }
+}
+
+/* ── STOP ── */
+function stopCam(){
+  scanning=false;
+  if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+  if(zCtrl){try{zCtrl.stop();}catch(e){}zCtrl=null;}
+  if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}
+  detector=null;
+  var video=document.getElementById('video');
+  video.srcObject=null;
+  document.getElementById('ph').style.display='flex';
+  document.getElementById('ov').style.display='none';
+  document.getElementById('startBtn').disabled=false;
+  document.getElementById('stopBtn').disabled=true;
+  setSt('','Stopped');
+  dbg('=== Stopped ===');
+}
+</script>
+
+</body>
+</html>
