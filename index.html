@@ -11,44 +11,74 @@
 body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:40px}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,241,53,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(200,241,53,.022) 1px,transparent 1px);background-size:38px 38px;pointer-events:none;z-index:0}
 .w{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:14px}
+
 header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--bdr)}
 header h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;color:var(--acc);line-height:1}
 header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);letter-spacing:3px;text-transform:uppercase}
 .lbl{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+
+/* camera */
 .cam-wrap{margin-bottom:11px}
 .cam-view{position:relative;width:100%;aspect-ratio:4/3;background:#000;border-radius:16px;overflow:hidden;border:1px solid var(--bdr)}
 #video{width:100%;height:100%;object-fit:cover;display:block}
 #canvas{display:none}
 .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mut);background:#000}
 .ph svg{opacity:.2}
-.ph p{font-size:.8rem}
-.corner{position:absolute;width:28px;height:28px;border-color:var(--acc);border-style:solid;opacity:.8}
+.ph p{font-size:.8rem;text-align:center;padding:0 20px}
+
+/* corners */
+.corner{position:absolute;width:28px;height:28px;border-color:var(--acc);border-style:solid;opacity:.7}
 .corner.tl{top:14px;left:14px;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
 .corner.tr{top:14px;right:14px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
 .corner.bl{bottom:14px;left:14px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
 .corner.br{bottom:14px;right:14px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
-.ai-ov{position:absolute;inset:0;background:rgba(0,0,0,.82);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+
+/* palette hint overlay */
+.hint-ov{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);border:1px solid var(--bdr);border-radius:8px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:.62rem;color:var(--mut);white-space:nowrap;display:none}
+.hint-ov.show{display:block}
+
+/* AI overlay */
+.ai-ov{position:absolute;inset:0;background:rgba(0,0,0,.85);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;border-radius:16px}
 .ai-ov.show{display:flex}
-.spinner{width:42px;height:42px;border:3px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:spin .75s linear infinite}
+.spinner{width:44px;height:44px;border:3px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ai-msg{font-family:'DM Mono',monospace;font-size:.76rem;color:var(--acc);text-align:center}
-.result-flash{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(11,11,11,.88)}
-.result-flash.show{display:flex;animation:rfade 2s forwards}
-@keyframes rfade{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
-.rf-weight{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;color:var(--acc);line-height:1}
-.rf-label{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--mut);letter-spacing:3px}
-.fl{position:absolute;inset:0;background:var(--acc);opacity:0;pointer-events:none}
-.fl.go{animation:fsh .3s ease-out forwards}
-@keyframes fsh{0%{opacity:.6}100%{opacity:0}}
-.capture-btn{width:100%;padding:22px;border-radius:14px;border:none;background:var(--acc);color:#0b0b0b;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;cursor:pointer;transition:transform .1s,opacity .1s;margin-bottom:11px;display:none}
+.ai-msg{font-family:'DM Mono',monospace;font-size:.76rem;color:var(--acc);text-align:center;line-height:1.6;padding:0 20px}
+
+/* result flash */
+.result-flash{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:rgba(11,11,11,.92);border-radius:16px}
+.result-flash.show{display:flex;animation:rfade 2.5s forwards}
+@keyframes rfade{0%{opacity:1}75%{opacity:1}100%{opacity:0}}
+.rf-boxes{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--mut);letter-spacing:3px;margin-bottom:4px}
+.rf-weight{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--acc);line-height:1}
+.rf-sub{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--mut);letter-spacing:2px}
+
+/* flash */
+.fl{position:absolute;inset:0;background:var(--acc);opacity:0;pointer-events:none;border-radius:16px}
+.fl.go{animation:fsh .35s ease-out forwards}
+@keyframes fsh{0%{opacity:.55}100%{opacity:0}}
+
+/* zoom control */
+.zoom-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--sur);border:1px solid var(--bdr);border-radius:12px;margin-bottom:11px;display:none}
+.zoom-bar.show{display:flex}
+.zoom-lbl{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--mut);white-space:nowrap}
+.zoom-val{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--acc);min-width:32px;text-align:center}
+input[type=range]{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--bdr);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--acc);cursor:pointer}
+
+/* big scan button */
+.capture-btn{width:100%;padding:20px;border-radius:14px;border:none;background:var(--acc);color:#0b0b0b;font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;cursor:pointer;transition:transform .1s,opacity .1s;margin-bottom:11px;display:none}
 .capture-btn:active{transform:scale(.97);opacity:.85}
 .capture-btn:disabled{opacity:.3;pointer-events:none}
+
+/* cam buttons */
 .cam-btns{display:flex;gap:9px;margin-bottom:11px}
 .btn{flex:1;padding:12px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:500;transition:opacity .15s}
 .btn:active{opacity:.7}
 .btn:disabled{opacity:.3;pointer-events:none}
 .bp{background:var(--acc);color:#0b0b0b}
 .bs{background:var(--card);color:var(--txt);border:1px solid var(--bdr)}
+
+/* status */
 .stat{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--card);border:1px solid var(--bdr);border-radius:10px;margin-bottom:11px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--mut);flex-shrink:0;transition:background .3s}
 .dot.on{background:var(--acc);box-shadow:0 0 5px var(--agl);animation:bl 1.5s infinite}
@@ -56,6 +86,8 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 .dot.er{background:var(--red)}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.25}}
 #stTxt{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--mut);flex:1;line-height:1.4}
+
+/* totals */
 .totals{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
 .tot-card{border-radius:14px;padding:16px}
 .tot-card.kg{background:var(--adim);border:1px solid var(--acc)}
@@ -67,20 +99,37 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 .tot-card.boxes .tot-val{color:var(--txt)}
 .tot-unit{font-family:'DM Mono',monospace;font-size:.62rem;opacity:.45;margin-top:2px}
 .tot-card.kg .tot-unit{color:var(--acc)}
+
+/* batch result popup */
+.batch-popup{background:var(--sur);border:1px solid var(--acc);border-radius:14px;padding:13px;margin-bottom:11px;display:none}
+.batch-popup.show{display:block}
+.batch-popup .lbl{color:var(--acc);opacity:.7;margin-bottom:8px}
+.batch-list{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.btag{font-family:'DM Mono',monospace;font-size:.75rem;background:var(--adim);border:1px solid var(--acc);border-radius:6px;padding:4px 9px;color:var(--acc)}
+.btag.err{background:rgba(255,68,85,.08);border-color:var(--red);color:var(--red)}
+.batch-actions{display:flex;gap:8px}
+.bact{flex:1;padding:10px;border-radius:9px;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:.7rem;font-weight:500}
+.bact.confirm{background:var(--acc);color:#0b0b0b}
+.bact.discard{background:var(--card);color:var(--red);border:1px solid var(--bdr)}
+
+/* log */
 .log-box{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;margin-bottom:11px}
 .log-hd{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bdr)}
 .log-hd .lbl{margin:0}
 .bclr{background:none;border:1px solid var(--bdr);border-radius:6px;color:var(--red);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:1px;padding:4px 9px;cursor:pointer}
-.log-body{max-height:220px;overflow-y:auto}
+.log-body{max-height:200px;overflow-y:auto}
 .empty{padding:20px;text-align:center;color:var(--mut);font-family:'DM Mono',monospace;font-size:.7rem}
 .lrow{display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--bdr);animation:si .2s ease-out}
 @keyframes si{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
 .lrow:last-child{border-bottom:none}
 .ln{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);width:22px;text-align:right;flex-shrink:0}
 .lw{font-family:'DM Mono',monospace;font-size:.88rem;color:var(--acc);flex:1}
+.lbatch{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--mut);background:var(--card);border-radius:4px;padding:2px 5px}
 .lt{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut)}
 .lx{background:none;border:none;color:var(--mut);cursor:pointer;font-size:.82rem;padding:2px 6px}
 .lx:active{color:var(--red)}
+
+/* manual */
 .man{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;padding:12px;display:flex;gap:9px;align-items:center}
 .man .lbl{margin:0;white-space:nowrap;flex-shrink:0}
 .mi{flex:1;background:var(--card);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'DM Mono',monospace;font-size:.84rem;padding:9px 10px;outline:none;min-width:0}
@@ -92,8 +141,9 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 </head>
 <body>
 <div class="w">
-  <header><h1>WeightScan</h1><small>AI · Vision</small></header>
+  <header><h1>WeightScan</h1><small>Palette · AI</small></header>
 
+  <!-- Camera -->
   <div class="cam-wrap">
     <div class="cam-view">
       <video id="video" playsinline autoplay muted></video>
@@ -103,32 +153,54 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
           <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
           <circle cx="12" cy="13" r="4"/>
         </svg>
-        <p>Tap Start Camera</p>
+        <p>Tap Start Camera<br>then point at whole palette</p>
       </div>
       <div class="corner tl"></div><div class="corner tr"></div>
       <div class="corner bl"></div><div class="corner br"></div>
+      <div class="hint-ov show" id="hintOv">📦 Point at full palette — fit all boxes in frame</div>
       <div class="ai-ov" id="aiOv">
         <div class="spinner"></div>
-        <div class="ai-msg" id="aiMsg">Reading label…</div>
+        <div class="ai-msg" id="aiMsg">Claude scanning all labels…</div>
       </div>
       <div class="result-flash" id="resFlash">
-        <div class="rf-label">DETECTED</div>
-        <div class="rf-weight" id="resW">—</div>
-        <div class="rf-label">KG</div>
+        <div class="rf-boxes" id="rfBoxes">0 BOXES FOUND</div>
+        <div class="rf-weight" id="rfWeight">0.00</div>
+        <div class="rf-sub">KG TOTAL THIS SCAN</div>
       </div>
       <div class="fl" id="fl"></div>
     </div>
   </div>
 
-  <button class="capture-btn" id="capBtn" onclick="snap()">📷 SCAN BOX</button>
+  <!-- Zoom slider -->
+  <div class="zoom-bar" id="zoomBar">
+    <span class="zoom-lbl">ZOOM</span>
+    <input type="range" id="zoomSlider" min="1" max="5" step="0.5" value="1" oninput="setZoom(this.value)">
+    <span class="zoom-val" id="zoomVal">1×</span>
+  </div>
 
+  <!-- Big scan button -->
+  <button class="capture-btn" id="capBtn" onclick="snap()">📷 SCAN PALETTE</button>
+
+  <!-- Start/Stop -->
   <div class="cam-btns">
     <button class="btn bp" id="startBtn" onclick="startCam()">▶ Start Camera</button>
     <button class="btn bs" id="stopBtn" onclick="stopCam()" disabled>■ Stop</button>
   </div>
 
+  <!-- Status -->
   <div class="stat"><div class="dot" id="dot"></div><span id="stTxt">Tap Start Camera to begin</span></div>
 
+  <!-- Batch result preview -->
+  <div class="batch-popup" id="batchPopup">
+    <div class="lbl">📦 Boxes detected — confirm to add</div>
+    <div class="batch-list" id="batchList"></div>
+    <div class="batch-actions">
+      <button class="bact confirm" onclick="confirmBatch()">✓ ADD ALL</button>
+      <button class="bact discard" onclick="discardBatch()">✕ DISCARD</button>
+    </div>
+  </div>
+
+  <!-- Totals -->
   <div class="totals">
     <div class="tot-card kg">
       <div class="lbl">Total Weight</div>
@@ -142,11 +214,13 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
     </div>
   </div>
 
+  <!-- History -->
   <div class="log-box">
     <div class="log-hd"><span class="lbl">History</span><button class="bclr" onclick="clearAll()">CLEAR ALL</button></div>
     <div class="log-body" id="logBody"><div class="empty" id="emptyMsg">No scans yet</div></div>
   </div>
 
+  <!-- Manual -->
   <div class="man">
     <span class="lbl">Manual</span>
     <input class="mi" id="manIn" type="number" step="0.01" min="0" placeholder="e.g. 24.20">
@@ -155,36 +229,51 @@ header small{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mut);le
 </div>
 
 <script>
-var PROXY = 'https://weightscan-proxy.origamioktagone.workers.dev';
-var scans=[], idC=0, stream=null, processing=false;
+var PROXY='https://weightscan-proxy.origamioktagone.workers.dev';
+var scans=[],idC=0,stream=null,processing=false,pendingBatch=[],zoomTrack=null;
 
 function setSt(cls,msg){
   document.getElementById('dot').className='dot '+(cls||'');
   document.getElementById('stTxt').textContent=msg;
 }
 
+/* ── CAMERA ── */
 async function startCam(){
   document.getElementById('startBtn').disabled=true;
   setSt('on','Starting camera…');
   try{
     try{
       stream=await navigator.mediaDevices.getUserMedia({
-        video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}
+        video:{facingMode:{ideal:'environment'},width:{ideal:3840},height:{ideal:2160}}
       });
     }catch(e){
-      stream=await navigator.mediaDevices.getUserMedia({video:true});
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});
     }
+
     var video=document.getElementById('video');
     video.srcObject=stream;
     await new Promise(function(res,rej){
       video.onloadedmetadata=function(){video.play().then(res).catch(rej);};
       setTimeout(function(){rej(new Error('timeout'));},8000);
     });
+
+    /* try to enable zoom */
+    zoomTrack=stream.getVideoTracks()[0];
+    var caps=zoomTrack.getCapabilities&&zoomTrack.getCapabilities();
+    if(caps&&caps.zoom){
+      var zb=document.getElementById('zoomBar');
+      zb.classList.add('show');
+      document.getElementById('zoomSlider').min=caps.zoom.min||1;
+      document.getElementById('zoomSlider').max=Math.min(caps.zoom.max||5,8);
+      document.getElementById('zoomSlider').value=1;
+    }
+
     document.getElementById('ph').style.display='none';
     document.getElementById('startBtn').style.display='none';
     document.getElementById('capBtn').style.display='block';
     document.getElementById('stopBtn').disabled=false;
-    setSt('on','Point at label → tap SCAN BOX');
+    document.getElementById('hintOv').classList.add('show');
+    setSt('on','Point at palette → tap SCAN PALETTE');
   }catch(e){
     var msg='Camera error';
     if(e.name==='NotAllowedError') msg='Permission denied — allow camera in Settings';
@@ -203,15 +292,25 @@ function stopCam(){
   document.getElementById('startBtn').disabled=false;
   document.getElementById('capBtn').style.display='none';
   document.getElementById('stopBtn').disabled=true;
+  document.getElementById('zoomBar').classList.remove('show');
   setSt('','Camera stopped');
 }
 
+function setZoom(v){
+  document.getElementById('zoomVal').textContent=v+'×';
+  if(zoomTrack){
+    try{zoomTrack.applyConstraints({advanced:[{zoom:parseFloat(v)}]});}catch(e){}
+  }
+}
+
+/* ── SNAP ── */
 async function snap(){
-  if(processing) return;
+  if(processing)return;
   processing=true;
   document.getElementById('capBtn').disabled=true;
+  document.getElementById('hintOv').classList.remove('show');
 
-  /* capture frame */
+  /* capture */
   var video=document.getElementById('video');
   var canvas=document.getElementById('canvas');
   canvas.width=video.videoWidth;
@@ -220,20 +319,20 @@ async function snap(){
 
   /* flash */
   var fl=document.getElementById('fl');
-  fl.classList.remove('go'); void fl.offsetWidth; fl.classList.add('go');
+  fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go');
 
-  /* show spinner */
+  /* spinner */
   document.getElementById('aiOv').classList.add('show');
-  document.getElementById('aiMsg').textContent='Claude reading label…';
-  setSt('on','Reading label…');
+  document.getElementById('aiMsg').textContent='Claude scanning all labels on palette…';
+  setSt('on','Scanning palette…');
 
-  /* resize image to 800px max */
+  /* resize to 1600px — bigger = more boxes readable */
   var out=document.createElement('canvas');
-  var scale=Math.min(1, 800/canvas.width);
+  var scale=Math.min(1,1600/canvas.width);
   out.width=Math.round(canvas.width*scale);
   out.height=Math.round(canvas.height*scale);
   out.getContext('2d').drawImage(canvas,0,0,out.width,out.height);
-  var b64=out.toDataURL('image/jpeg',0.75).split(',')[1];
+  var b64=out.toDataURL('image/jpeg',0.90).split(',')[1];
 
   try{
     var resp=await fetch(PROXY,{
@@ -241,12 +340,12 @@ async function snap(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         model:'claude-haiku-4-5-20251001',
-        max_tokens:64,
+        max_tokens:300,
         messages:[{
           role:'user',
           content:[
             {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
-            {type:'text',text:'This is a product weight label (meat/food box). Find the NET WEIGHT in kg (look for: NET WEIGHT, MASA NETTO, POIDS NET, NETTO). Reply with ONLY the decimal number, example: 18.80 — no units, no extra words. If not found reply: NONE'}
+            {type:'text',text:'This is a photo of multiple product boxes/cartons stacked on a palette in a warehouse. Each box has a weight label showing NET WEIGHT / MASA NETTO / POIDS NET in kg. Find ALL visible weight values in kg from ALL boxes you can see. Reply with ONLY a JSON array of numbers, example: [18.80, 22.40, 19.10, 21.00] — no text, no explanation, just the array. If no weights found reply: []'}
           ]
         }]
       })
@@ -261,47 +360,94 @@ async function snap(){
     var reply='';
     try{reply=data.content[0].text.trim();}catch(e){}
 
-    if(!reply||reply.toUpperCase()==='NONE'){
-      setSt('er','No weight found — aim closer at the label');
-    }else{
-      var w=parseFloat(reply.replace(',','.'));
-      if(isNaN(w)||w<=0||w>99999){
-        setSt('er','Unexpected response: '+reply);
-      }else{
-        /* show result flash */
-        var rf=document.getElementById('resFlash');
-        document.getElementById('resW').textContent=w.toFixed(2);
-        rf.classList.remove('show'); void rf.offsetWidth; rf.classList.add('show');
-        setTimeout(function(){rf.classList.remove('show');},2000);
-        addScan(w);
+    /* parse JSON array */
+    var weights=[];
+    try{
+      var clean=reply.replace(/```json|```/g,'').trim();
+      var parsed=JSON.parse(clean);
+      if(Array.isArray(parsed)){
+        weights=parsed.filter(function(v){return typeof v==='number'&&v>0&&v<99999;});
+      }
+    }catch(e){
+      /* fallback: extract numbers manually */
+      var matches=reply.match(/\d+[.,]\d+/g);
+      if(matches){
+        weights=matches.map(function(m){return parseFloat(m.replace(',','.'));}).filter(function(v){return v>0&&v<99999;});
       }
     }
 
+    document.getElementById('aiOv').classList.remove('show');
+
+    if(weights.length===0){
+      setSt('er','No weights found — try getting closer or better angle');
+    }else{
+      /* show result flash */
+      var batchTotal=weights.reduce(function(a,b){return a+b;},0);
+      document.getElementById('rfBoxes').textContent=weights.length+' BOX'+(weights.length>1?'ES':'')+ ' FOUND';
+      document.getElementById('rfWeight').textContent=batchTotal.toFixed(2);
+      var rf=document.getElementById('resFlash');
+      rf.classList.remove('show');void rf.offsetWidth;rf.classList.add('show');
+      setTimeout(function(){rf.classList.remove('show');},2500);
+
+      /* show batch preview */
+      pendingBatch=weights;
+      showBatchPreview(weights);
+      setSt('ok','Found '+weights.length+' boxes → confirm to add');
+    }
+
   }catch(e){
+    document.getElementById('aiOv').classList.remove('show');
     setSt('er','Error: '+(e.message||'unknown'));
   }
 
-  document.getElementById('aiOv').classList.remove('show');
+  document.getElementById('hintOv').classList.add('show');
   document.getElementById('capBtn').disabled=false;
   processing=false;
 }
 
-function addScan(weight){
-  var t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  scans.push({id:idC++,weight:weight,time:t});
-  renderLog(); updateTotals();
-  setSt('ok','Box '+scans.length+': '+weight.toFixed(2)+' kg ✓');
-  setTimeout(function(){if(stream)setSt('on','Point at label → tap SCAN BOX');},2000);
+function showBatchPreview(weights){
+  var list=document.getElementById('batchList');
+  list.innerHTML='';
+  weights.forEach(function(w,i){
+    var tag=document.createElement('span');
+    tag.className='btag';
+    tag.textContent='#'+(i+1)+' '+w.toFixed(2)+'kg';
+    list.appendChild(tag);
+  });
+  document.getElementById('batchPopup').classList.add('show');
 }
 
+function confirmBatch(){
+  var t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var batchId=idC++;
+  pendingBatch.forEach(function(w){
+    scans.push({id:idC++,weight:w,time:t,batch:batchId});
+  });
+  var total=pendingBatch.reduce(function(a,b){return a+b;},0);
+  pendingBatch=[];
+  document.getElementById('batchPopup').classList.remove('show');
+  renderLog();updateTotals();
+  setSt('ok','Added '+scans.length+' boxes total — '+total.toFixed(2)+' kg this scan ✓');
+  setTimeout(function(){if(stream)setSt('on','Point at palette → tap SCAN PALETTE');},2500);
+}
+
+function discardBatch(){
+  pendingBatch=[];
+  document.getElementById('batchPopup').classList.remove('show');
+  setSt('on','Discarded — point at palette → tap SCAN PALETTE');
+}
+
+/* ── DATA ── */
 function deleteScan(id){
   scans=scans.filter(function(s){return s.id!==id;});
-  renderLog(); updateTotals();
+  renderLog();updateTotals();
 }
 
 function clearAll(){
   if(!scans.length||!confirm('Clear all '+scans.length+' scan(s)?'))return;
-  scans=[]; renderLog(); updateTotals(); setSt('','Cleared');
+  scans=[];pendingBatch=[];
+  document.getElementById('batchPopup').classList.remove('show');
+  renderLog();updateTotals();setSt('','Cleared');
 }
 
 function addManual(){
@@ -312,11 +458,13 @@ function addManual(){
     setTimeout(function(){inp.style.borderColor='';},1000);
     return;
   }
-  addScan(v); inp.value='';
+  var t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  scans.push({id:idC++,weight:v,time:t,batch:-1});
+  inp.value='';
+  renderLog();updateTotals();
+  setSt('ok','Manual: '+v.toFixed(2)+' kg added');
 }
-document.getElementById('manIn').addEventListener('keydown',function(e){
-  if(e.key==='Enter') addManual();
-});
+document.getElementById('manIn').addEventListener('keydown',function(e){if(e.key==='Enter')addManual();});
 
 function updateTotals(){
   var total=scans.reduce(function(s,e){return s+e.weight;},0);
@@ -332,7 +480,12 @@ function renderLog(){
     var n=scans.length-ri;
     var row=document.createElement('div');
     row.className='lrow';
-    row.innerHTML='<span class="ln">#'+n+'</span><span class="lw">'+s.weight.toFixed(2)+' kg</span><span class="lt">'+s.time+'</span><button class="lx" onclick="deleteScan('+s.id+')">✕</button>';
+    row.innerHTML=
+      '<span class="ln">#'+n+'</span>'+
+      '<span class="lw">'+s.weight.toFixed(2)+' kg</span>'+
+      (s.batch>=0?'<span class="lbatch">batch</span>':'')+
+      '<span class="lt">'+s.time+'</span>'+
+      '<button class="lx" onclick="deleteScan('+s.id+')">✕</button>';
     body.appendChild(row);
   });
 }
